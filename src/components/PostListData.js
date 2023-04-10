@@ -17,12 +17,15 @@ const PostListData = () => {
     }, [])
 
     const addPost = () => {
-        const newPost = { title, body };
-        axios.post('https://jsonplaceholder.typicode.com/posts', newPost)
-            .then(respons => setPosts([...posts, respons.data]))
-            .catch(error => console.log('error', error))
-        setTitle('');
-        setBody('');
+        if(posts.trim() !== ''){
+            const newPost = { title, body };
+            axios.post('https://jsonplaceholder.typicode.com/posts', newPost)
+                .then(respons => setPosts([...posts, respons.data]))
+                .catch(error => console.log('error', error))
+            setTitle('');
+            setBody('');
+        }
+ 
     }
 
     const editPost = post => {
@@ -61,7 +64,7 @@ const PostListData = () => {
 
     return (
         <DragDropContext onDragEnd={handleDragEnd}>
-            <div className='container'>
+            <div className='postcontainer'>
                 <h2 className='heading'>PostListData</h2>
                 <div className='post-form'>
                     {editing ? (
@@ -83,15 +86,16 @@ const PostListData = () => {
                             <button onClick={() => CancleEdit()}>Cancle Post</button>
                         </div>
                     ) : (
-                        <div className=''>
-                            <div>
-                                <div>
+                        <div className='contact-form'>
+                             <h3>Add Post</h3>
+                            <div className='form-group'>
+                                <div className='form-input'>
                                     <label htmlFor='title'>Title:</label>
                                     <input type='text' id='title' value={title} onChange={e => setTitle(e.target.value)} />
                                 </div>
                             </div>
-                            <div>
-                                <div>
+                            <div className='form-group'>
+                                <div className='form-input'>
                                     <label htmlFor='body'>Body:</label>
                                     <input type='text' id='body' value={body} onChange={e => setBody(e.target.value)} />
                                 </div>
@@ -109,7 +113,7 @@ const PostListData = () => {
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <Droppable droppableId='container'>
+                    <Droppable droppableId='postcontainer'>
                         {(provided) => (
                             <tbody ref={provided.innerRef} {...provided.droppableProps}>
                                 {posts.map((post, index) => (

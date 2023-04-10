@@ -1,117 +1,145 @@
-// import React, { useEffect, useState } from 'react'
-// import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
-// const UserListData = () => {
+const UserListData = () => {
 
-//     const [users, setUsers] = useState([]);
-//     const [name, setname] = useState('');
-//     const [email, setEmail] = useState('');
-//     const [editing, setEditing] = useState(false);
-//     const [currentUser, setCurrentUser] = useState(null);
+    const [users, setUsers] = useState([]);
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [editing, setEditing] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
 
-//     useEffect(() => {
-//         axios.get('https://jsonplaceholder.typicode.com/users')
-//             .then(respons => setUsers(respons.data))
-//             .catch(error => console.log('error', error))
-//     }, [])
+    useEffect(() => {
+        axios.get('https://jsonplaceholder.typicode.com/users')
+            .then(respons => setUsers(respons.data))
+            .catch(error => console.log('error', error))
+    }, [])
 
-//     const addPost = () => {
-//         const newPost = { title, body };
-//         axios.post('https://jsonplaceholder.typicode.com/users', newPost)
-//             .then(respons => setUsers([...posts, respons.data]))
-//             .catch(error => console.log('error', error))
-//         setTitle('');
-//         setBody('');
-//     }
+    const addUser = () => {
+        if(users.trim() !== ''){
+            const newUser = { name, email };
+            axios.post('https://jsonplaceholder.typicode.com/users', newUser)
+                .then(respons => setUsers([...users, respons.data]))
+                .catch(error => console.log('error', error))
+            setName('');
+            setEmail('');
+        }
+       
+    }
 
-//     const editPost = post => {
-//         setEditing(true);
-//         setCurrentPost(post);
-//     }
+    const editUser = user => {
+        setEditing(true);
+        setCurrentUser(user);
+    }
 
-//     const CancleEdit = () => {
-//         setEditing(false);
-//         setCurrentPost(null);
-//     }
+    const CancleEdit = () => {
+        setEditing(false);
+        setCurrentUser(null);
+    }
 
-//     const updatePost = updatePost => {
-//         setEditing(false);
-//         setCurrentPost(null);
-//         setPosts(
-//             posts.map(post => (
-//                 post.id === updatePost.id ? updatePost : post
-//             ))
-//         )
-//     }
+    const updateUser = updateUser => {
+        setEditing(false);
+        setCurrentUser(null);
+        setUsers(
+            users.map(user => (
+                user.id === updateUser.id ? updateUser : user
+            ))
+        )
+    }
 
-//     const deletePost = id =>{
-//         axios.delete(`https://jsonplaceholder.typicode.com/users/${id}`)
-//         .then(() => setPosts(posts.filter(post => post.id !== id)))
-//         .catch(error => console.log('error', error))
-//     }
+    const deleteUser = id => {
+        axios.delete(`https://jsonplaceholder.typicode.com/users/${id}`)
+            .then(() => setUsers(users.filter(user => user.id !== id)))
+            .catch(error => console.log('error', error))
+    }
 
-//     return (
-//         <div className='container'>
-//             <h2 className='heading'>PostListData</h2>
-//             {editing ?
-//                 <div className='contact-form'>
-//                     <h3>Edit Post</h3>
-//                     <div className='form-group'>
-//                         <div className='form-input'>
-//                             <label htmlFor='title'>Title:</label>
-//                             <input type='text' id='title' value={currentPost.title} onChange={e => setCurrentPost({ ...currentPost, title: e.target.value })} />
-//                         </div>
-//                     </div>
-//                     <div className='form-group'> 
-//                         <div className='form-input'>
-//                             <label htmlFor='body'>Body:</label>
-//                             <input type='text' id='body' value={currentPost.body}  onChange={e => setCurrentPost({ ...currentPost, body: e.target.value })} />
-//                         </div>
-//                     </div>
-//                     <button onClick={() => updatePost(currentPost)}>Save Post</button>
-//                     <button onClick={() => CancleEdit()}>Cancle Post</button>
-//                 </div> :
+    const handleDragEnd = result => {
+        if (!result.destination) return;
+        const UserLists = Array.from(users);
+        const [reorderdPost] = UserLists.splice(result.source.index, 1);
+        UserLists.splice(result.destination.index, 0, reorderdPost);
+        setUsers(UserLists);
+    }
 
-//                 <div className='container'>
-//                     <div>
-//                         <div>
-//                             <label htmlFor='title'>Title:</label>
-//                             <input type='text' id='title' value={title} onChange={e => setTitle(e.target.value)} />
-//                         </div>
-//                     </div>
-//                     <div>
-//                         <div>
-//                             <label htmlFor='body'>Body:</label>
-//                             <input type='text' id='body' value={body} onChange={e => setBody(e.target.value)} />
-//                         </div>
-//                     </div>
-//                     <button onClick={addPost}>Add Post</button>
-//                 </div>
-//             }
-//             <table>
-//                 <thead>
-//                     <tr>
-//                         <th>Title</th>
-//                         <th>Body</th>
-//                         <th>Action</th>
-//                     </tr>
-//                 </thead>
-//                 <tbody>
-//                     {posts.map(post => (
-//                         <tr key={post.id}>
-//                             <td>{post.title}</td>
-//                             <td>{post.body}</td>
-//                             <td>
-//                                 <button onClick={() => editPost(post)}>Edit</button>
-//                                 <button onClick={() =>deletePost(post.id)}>Delete</button>
-//                             </td>
+    return (
+        <DragDropContext onDragEnd={handleDragEnd}>
+            <div className='usercontainer'>
+                <h2 className='heading'>UserListData</h2>
+                <div className='post-form'>
+                    {editing ? (
+                        <div className='contact-form'>
+                            <h3>Edit User</h3>
+                            <div className='form-group'>
+                                <div className='form-input'>
+                                    <label htmlFor='name'>name:</label>
+                                    <input type='text' id='name' value={currentUser.name} onChange={e => setCurrentUser({ ...currentUser, name: e.target.value })} />
+                                </div>
+                            </div>
+                            <div className='form-group'>
+                                <div className='form-input'>
+                                    <label htmlFor='email'>Email:</label>
+                                    <input type='email' id='email' value={currentUser.email} onChange={e => setCurrentUser({ ...currentUser, email: e.target.value })} />
+                                </div>
+                            </div>
+                            <button onClick={() => updateUser(currentUser)}>Save Post</button>
+                            <button onClick={() => CancleEdit()}>Cancle Post</button>
+                        </div>
+                    ) : (
+                        <div className='contact-form'>
+                            <h3>Add User</h3>
+                            <div className='form-group'>
+                                <div className='form-input'>
+                                    <label htmlFor='name'>name:</label>
+                                    <input type='text' id='name' value={name} onChange={e => setName(e.target.value)} />
+                                </div>
+                            </div>
+                            <div className='form-group'>
+                                <div className='form-input'>
+                                    <label htmlFor='email'>email:</label>
+                                    <input type='email' id='email' value={email} onChange={e => setEmail(e.target.value)} />
+                                </div>
+                            </div>
+                            <button onClick={addUser}>Add User</button>
+                        </div>
+                    )}
+                </div>
 
-//                         </tr>
-//                     ))}
-//                 </tbody>
-//             </table>
-//         </div>
-//     )
-// }
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Body</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <Droppable droppableId='usercontainer'>
+                        {(provided) => (
+                            <tbody ref={provided.innerRef} {...provided.droppableProps}>
+                                {users.length > 0 && users.map((user, index) => (
+                                    <Draggable key={user.id} draggableId={user.id.toString()} index={index}>
+                                        {(provided) => (
+                                            <tr ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                                <td>{user.name}</td>
+                                                <td>{user.email}</td>
+                                                <td>
+                                                    <button onClick={() => editUser(user)}>Edit</button>
+                                                    <button onClick={() => deleteUser(user.id)}>Delete</button>
+                                                </td>
 
-// export default UserListData
+                                            </tr>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </tbody>
+                        )}
+                    </Droppable>
+
+                </table>
+            </div>
+        </DragDropContext>
+    )
+}
+
+export default UserListData

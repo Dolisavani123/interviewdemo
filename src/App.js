@@ -9,7 +9,7 @@ function App() {
     <Router>
       <Routes>
         <Route path='/' element={<PostListData/>}/>
-        {/* <Route path='/userlist' element={<UserListData/>}/> */}
+        <Route path='/userlist' element={<UserListData/>}/>
       </Routes>
     </Router>
   );
