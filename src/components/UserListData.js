@@ -103,8 +103,8 @@ const UserListData = () => {
                                     <input type='email' id='email' value={currentUser.email} onChange={e => setCurrentUser({ ...currentUser, email: e.target.value })} required />
                                 </div>
                             </div>
-                            <button onClick={() => updateUser(currentUser)}>Save Post</button>
-                            <button onClick={() => CancleEdit()}>Cancle Post</button>
+                            <button onClick={() => updateUser(currentUser)}>Save User</button>
+                            <button onClick={() => CancleEdit()}>Cancle User</button>
                         </div>
                     ) : (
                         <div className='contact-form'>
