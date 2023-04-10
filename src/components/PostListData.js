@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const PostListData = () => {
 
@@ -7,6 +8,13 @@ const PostListData = () => {
     const [body, setBody] = useState('');
     const [editing, setEditing] = useState(false);
     const [currentPost, setCurrentPost] = useState(null);
+
+    useEffect(() => {
+      axios.get('https://jsonplaceholder.typicode.com/posts')
+      .then(respons => setPosts(respons.data))
+      .catch(error => console.log('error', error))
+    }, [])
+    
 
 
     return (
@@ -36,6 +44,19 @@ const PostListData = () => {
                         <th>Action</th>
                     </tr>
                 </thead>
+                <tbody>
+                    {posts.map(post => (
+                        <tr key={post.id}>
+                            <td>{post.title}</td>
+                            <td>{post.body}</td>
+                            <td>
+                                <button>Edit</button>
+                                <button>Delete</button>
+                            </td>
+
+                        </tr>
+                    ))}
+                </tbody>
             </table>
         </div>
     )
